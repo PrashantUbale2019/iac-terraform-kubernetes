@@ -1,0 +1,15 @@
+# Ignore environment variables files
+.env
+.env.local
+*.env
+
+# Ignore cloud configuration secrets
+.kube/config
+kubeconfig
+*.pem
+*.key
+
+# Ignore Terraform state files containing secrets
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
