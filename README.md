@@ -43,7 +43,7 @@ indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  # kind_cluster.kind_local_cluster[0] will be created
+  ### kind_cluster.kind_local_cluster[0] will be created
   + resource "kind_cluster" "kind_local_cluster" {
       + client_certificate     = (known after apply)
       + client_key             = (known after apply)
@@ -77,8 +77,8 @@ Terraform will perform the following actions:
         }
     }
 
-  # kind_cluster.local_cluster will be destroyed
-  # (because kind_cluster.local_cluster is not in configuration)
+  ### kind_cluster.local_cluster will be destroyed
+  ### (because kind_cluster.local_cluster is not in configuration)
   - resource "kind_cluster" "local_cluster" {
       - client_certificate     = <<-EOT
             -----BEGIN CERTIFICATE-----
@@ -152,7 +152,7 @@ Terraform will perform the following actions:
         }
     }
 
-  # minikube_cluster.minikube_local_cluster will be created
+  ### minikube_cluster.minikube_local_cluster will be created
   + resource "minikube_cluster" "minikube_local_cluster" {
       + apiserver_ips              = (known after apply)
       + apiserver_name             = "minikubeCA"
@@ -266,7 +266,7 @@ indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  # kind_cluster.kind_local_cluster[0] will be created
+  ### kind_cluster.kind_local_cluster[0] will be created
   + resource "kind_cluster" "kind_local_cluster" {
       + client_certificate     = (known after apply)
       + client_key             = (known after apply)
@@ -300,8 +300,8 @@ Terraform will perform the following actions:
         }
     }
 
-  # kind_cluster.local_cluster will be destroyed
-  # (because kind_cluster.local_cluster is not in configuration)
+  ### kind_cluster.local_cluster will be destroyed
+  ### (because kind_cluster.local_cluster is not in configuration)
   - resource "kind_cluster" "local_cluster" {
       - client_certificate     = <<-EOT
             -----BEGIN CERTIFICATE-----
@@ -357,7 +357,7 @@ Terraform will perform the following actions:
               - kubeadm_config_patches = [] -> null
               - labels                 = {} -> null
               - role                   = "control-plane" -> null
-                # (1 unchanged attribute hidden)
+                ### (1 unchanged attribute hidden)
 
               - extra_port_mappings {
                   - container_port = 80 -> null
@@ -370,12 +370,12 @@ Terraform will perform the following actions:
               - kubeadm_config_patches = [] -> null
               - labels                 = {} -> null
               - role                   = "worker" -> null
-                # (1 unchanged attribute hidden)
+                ### (1 unchanged attribute hidden)
             }
         }
     }
 
-  # minikube_cluster.minikube_local_cluster will be created
+  ### minikube_cluster.minikube_local_cluster will be created
   + resource "minikube_cluster" "minikube_local_cluster" {
       + apiserver_ips              = (known after apply)
       + apiserver_name             = "minikubeCA"
