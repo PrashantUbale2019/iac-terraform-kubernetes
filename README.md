@@ -2,6 +2,124 @@
 ## Provision the Kubernetes environment using Terraform
 ### 1. Create a local cluster with Kind
 ### 2. Create a local cluster with Minikube
+
+### variables.tf
+```
+locals {
+  minikube_cluster_name = "cicd-minikube-local-cluster"
+  minikube_driver_type  = "docker"
+  minikube_node_count   = 2
+  minikube_k8s_version  = "v1.30.0"
+  kind_cluster_name     = "cicd-kind-local-cluster"
+  kind_node_count       = 1
+  kind                  = "Cluster"
+  kind_api_version      = "kind.x-k8s.io/v1alpha4"
+  kind_role             = "control-plane"
+  kind_container_port   = 80
+  kind_host_port        = 80
+  kind_listen_address   = "127.0.0.1"
+  kind_protocol         = "TCP"
+}
+```
+### main.tf
+```
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    kind = {
+      source  = "tehcyx/kind"
+      version = "~> 0.6.0" 
+    }
+    minikube = {
+      source  = "scott-the-programmer/minikube"
+      version = "~> 0.4.4"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.0"
+    }
+  }
+}
+
+--# 4. Configure Kubernetes Provider to target the new Minikube instance
+provider "kubernetes" {
+  host                   = minikube_cluster.minikube_local_cluster.host
+  client_certificate     = minikube_cluster.minikube_local_cluster.client_certificate
+  client_key             = minikube_cluster.minikube_local_cluster.client_key
+  cluster_ca_certificate = minikube_cluster.minikube_local_cluster.cluster_ca_certificate
+}
+
+provider "minikube" {}
+--# 3. Provision the Minikube Cluster using Locals
+resource "minikube_cluster" "minikube_local_cluster" {
+  cluster_name       = local.minikube_cluster_name
+  driver             = local.minikube_driver_type
+  nodes              = local.minikube_node_count
+  kubernetes_version = local.minikube_k8s_version
+  
+  --# Wait until core system components are fully operational
+  wait               = ["apiserver", "system_pods"] 
+}
+
+provider "kind" {}
+
+resource "kind_cluster" "kind_local_cluster" {
+  name           = local.kind_cluster_name
+  count          = local.kind_node_count
+  wait_for_ready = true
+
+  kind_config {
+    kind          = local.kind
+    api_version   = local.kind_api_version
+
+    --# Control Plane Node
+    node {
+      role = local.kind_role
+ 
+      extra_port_mappings {
+        container_port = local.kind_container_port
+        host_port      = local.kind_host_port
+        listen_address = local.kind_listen_address
+        protocol       = local.kind_protocol
+      }
+    }
+ 
+    node {
+      role = "worker"
+    }
+  }
+}
+```
+### output.tf
+```
+ --# 5. Define Terraform Outputs
+ --# Kind Cluster Outputs
+ output "kind_cluster_status" {
+  description = "Confirmation status of the provisioned cluster"
+  value       = "Kind cluster ${local.kind_cluster_name} is successfully provisioned."
+}
+output "kind_cluster_name" {
+  description = "The assigned name of the Kind cluster"
+  value       = kind_cluster.kind_local_cluster[*].name
+}
+output "kubernetes_api_endpoint" {
+  description = "The API endpoints for all created KinD clusters"
+  value       = kind_cluster.kind_local_cluster[*].endpoint
+}
+
+--# Minikube Cluster Outputs
+output "minikube_cluster_status" {
+  description = "Confirmation status of the provisioned cluster"
+  value       = "Minikube cluster ${local.minikube_cluster_name} is successfully provisioned."
+}
+output "minikube_cluster_name" {
+  description = "The assigned name of the Minikube cluster"
+  value       = minikube_cluster.minikube_local_cluster.cluster_name
+}
+output "kubernetes_cluster_endpoint" {
+  value = minikube_cluster.minikube_local_cluster.host
+}
+```
 Navigate to infra folder : cd infra and run terraform commands
 ## Run : terraform init
 Initializing provider plugins found in the configuration...
